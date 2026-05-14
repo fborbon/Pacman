@@ -36,9 +36,19 @@ Pacman/
 │   ├── ATARISYS.ASM        # Atari system definitions
 │   └── SYSTEXT.ASM         # Text / display routines
 │
-└── Python_version/
-    ├── pacman.py           # Python translation of the full assembly codebase
-    └── requirements.txt    # pygame >= 2.0.0
+├── Python_version/
+│   ├── pacman.py           # Python translation of the full assembly codebase
+│   ├── requirements.txt    # pygame >= 2.0.0
+│   └── take_screenshots.py # headless renderer used to generate screenshots/
+│
+├── AI_player/
+│   ├── environment.py      # gym-style headless wrapper around pacman.py
+│   ├── dqn_agent.py        # QNetwork, ReplayBuffer, DQNAgent
+│   ├── train.py            # training loop with checkpointing
+│   ├── play.py             # watch a saved model play
+│   └── requirements.txt    # torch >= 2.0, numpy, pygame
+│
+└── screenshots/            # rendered gameplay stills
 ```
 
 ### Atari Version — Roklan Corp (Revision 3.0)
@@ -108,6 +118,86 @@ python Python_version/pacman.py
 | P | Pause / Resume |
 | Q / Esc | Quit |
 | Enter | New game (on Game Over screen) |
+
+---
+
+## AI Player — Deep Q-Network (DQN)
+
+The `AI_player/` folder contains a reinforcement learning agent that learns to play Pac-Man from scratch — no hard-coded rules, only the raw game signal.
+
+### How it works
+
+The agent uses a **Deep Q-Network**, the same algorithm DeepMind used to play Atari games at human level (Mnih et al., 2015). It observes the current game state as an 81-dimensional feature vector, selects one of four actions (UP / DOWN / LEFT / RIGHT), and updates its policy based on the reward received:
+
+| Event | Reward |
+|---|---|
+| Eating a dot | +1.0 |
+| Eating a power pellet | +5.0 |
+| Eating a ghost | +20 / +40 / +80 / +160 |
+| Dying | −50.0 |
+| Clearing a level | +100.0 |
+| Each step taken | −0.05 |
+
+**Observation vector (81 floats):**
+- Pac-Man position and direction (6)
+- 4 ghosts — position, state (frightened / eaten / inactive), distance (24)
+- Fright timer and dots remaining (2)
+- 7×7 local maze view centred on Pac-Man (49)
+
+**Network architecture:**
+
+```
+Input (81) → Linear(256) → ReLU → Linear(256) → ReLU → Linear(4 Q-values)
+```
+
+**Training details:**
+
+| Hyperparameter | Value |
+|---|---|
+| Replay buffer | 100 000 transitions |
+| Batch size | 64 |
+| Discount γ | 0.99 |
+| ε decay | 1.0 → 0.05 over 200 k steps |
+| Target network sync | every 1 000 steps |
+| Optimiser | Adam, lr = 1e-4 |
+| Loss | Huber (SmoothL1) |
+| Frame skip | 4 frames per action |
+
+### Training the agent
+
+```bash
+pip install -r AI_player/requirements.txt
+python AI_player/train.py --episodes 5000
+```
+
+Resume from a checkpoint:
+
+```bash
+python AI_player/train.py --episodes 10000 --load AI_player/checkpoints/dqn_ep5000.pt
+```
+
+Progress is printed every 100 episodes. Checkpoints land in `AI_player/checkpoints/`; the best model (highest mean score over the last 100 episodes) is saved as `dqn_best.pt`.
+
+### Watching the agent play
+
+```bash
+python AI_player/play.py --model AI_player/checkpoints/dqn_best.pt
+```
+
+Add `--headless` to benchmark without opening a window:
+
+```bash
+python AI_player/play.py --model AI_player/checkpoints/dqn_best.pt --headless --episodes 20
+```
+
+### Learning curve
+
+| Training stage | Typical behaviour |
+|---|---|
+| 0 – 1 000 eps | Random movement, dies quickly |
+| 1 000 – 5 000 eps | Learns to collect dots, avoids most ghosts |
+| 5 000 – 20 000 eps | Uses power pellets strategically, hunts frightened ghosts |
+| 20 000+ eps | Consistent multi-level runs |
 
 ---
 
