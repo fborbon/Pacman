@@ -75,6 +75,22 @@ Ghost AI faithfully reproduces the four classic personalities:
 
 ---
 
+## Screenshots
+
+| Ready Screen | Gameplay |
+|:---:|:---:|
+| ![Ready screen](screenshots/01_ready_screen.png) | ![Gameplay start](screenshots/02_gameplay_start.png) |
+
+| Frightened Ghosts | Death Animation |
+|:---:|:---:|
+| ![Frightened ghosts](screenshots/03_frightened_ghosts.png) | ![Death animation](screenshots/04_death_animation.png) |
+
+| Game Over |
+|:---:|
+| ![Game over](screenshots/05_game_over.png) |
+
+---
+
 ## Running the Python Version
 
 **Requirements:** Python 3.8+, pygame
