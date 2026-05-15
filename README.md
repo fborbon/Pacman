@@ -328,6 +328,58 @@ python AI_player/play.py --model AI_player/checkpoints/dqn_best.pt --headless --
 
 ---
 
+### Training Results — 300-Episode Run
+
+The following results come from a 300-episode training run (~21 min, CPU-only).  
+Checkpoints were saved at episodes 100, 200, and 300; each was then evaluated over 60 games to produce the charts below.
+
+#### Key statistics
+
+| Checkpoint | Mean score | Dots eaten | Maze completion | Steps to milestone | Success rate |
+|:---:|---:|---:|---:|---:|---:|
+| Episode 100 | 805 | 72 / 244 | 29.6 % | 712 steps | 5 % |
+| Episode 200 | 1 264 | 109 / 244 | 44.8 % | 590 steps | 55 % |
+| Episode 300 | **1 704** | **143 / 244** | **58.6 %** | **361 steps** | **92 %** |
+
+> **Success** is defined as scoring ≥ 1 200 points in a single episode (≈ 120 dots eaten).  
+> **Steps to milestone** measures how quickly the agent reaches that score — fewer steps = faster solve.
+
+#### Score progression
+
+Mean episode score more than doubles from episode 100 to 300, with variance shrinking as the policy stabilises.
+
+![Score progression](AI_player/training_results/chart_score_progress.png)
+
+#### Maze completion — dots eaten
+
+The agent goes from eating 30 % of the maze at episode 100 to nearly 60 % at episode 300, with the distribution tightening noticeably.
+
+![Dots eaten](AI_player/training_results/chart_dots_eaten.png)
+
+#### Time to solve the labyrinth
+
+Left panel: how many steps the agent needs to reach the 1 200-point milestone (only episodes where it succeeded).  
+Right panel: what fraction of episodes hit the milestone at all.
+
+The agent solves the milestone **49 % faster** by episode 300, and goes from succeeding in 1 in 20 games to succeeding in 9 in 10.
+
+![Solve time](AI_player/training_results/chart_solve_time.png)
+
+#### Successes and failures
+
+Stacked bars show raw success / failure counts per checkpoint (out of 60 eval games).  
+The dashed orange line tracks mean score on the right axis.
+
+![Success and failures](AI_player/training_results/chart_success_fail.png)
+
+#### Policy evolution — game screenshots every 30 episodes
+
+Each frame is a snapshot of the agent playing after that many training episodes. The maze visibly empties further and further right as the policy matures.
+
+![Progression grid](AI_player/training_results/chart_progression.png)
+
+---
+
 ## Upstream Repository
 
 The Atari assembly source is mirrored from:
