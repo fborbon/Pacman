@@ -330,19 +330,25 @@ python AI_player/play.py --model AI_player/checkpoints/dqn_best.pt --headless --
 
 ### Training Results — 300-Episode Run
 
-The following results come from a 300-episode training run (~21 min, CPU-only).  
-Checkpoints were saved at episodes 100, 200, and 300; each was then evaluated over 60 games to produce the charts below.
+Results span two training runs totalling **5 300 episodes** (~8 hours, CPU-only).  
+Checkpoints at episodes 100, 200, 300, 1 000, 2 000, 3 000, 4 000 and 5 000 were each evaluated over 60 games.
 
 #### Key statistics
 
 | Checkpoint | Mean score | Dots eaten | Maze completion | Steps to milestone | Success rate |
 |:---:|---:|---:|---:|---:|---:|
-| Episode 100 | 805 | 72 / 244 | 29.6 % | 712 steps | 5 % |
-| Episode 200 | 1 264 | 109 / 244 | 44.8 % | 590 steps | 55 % |
-| Episode 300 | **1 704** | **143 / 244** | **58.6 %** | **361 steps** | **92 %** |
+| Episode 100 | 843 | 76 / 244 | 31.1 % | — | 7 % |
+| Episode 200 | 1 266 | 110 / 244 | 45.1 % | — | 58 % |
+| Episode 300 | 1 601 | 137 / 244 | 56.1 % | — | 82 % |
+| Episode 1 000 | 2 479 | 192 / 244 | 78.7 % | — | 98 % |
+| Episode 2 000 | 2 349 | 186 / 244 | 76.2 % | — | **100 %** |
+| Episode 3 000 | 2 498 | 192 / 244 | 78.7 % | — | **100 %** |
+| Episode 4 000 | 2 449 | 191 / 244 | 78.3 % | — | **100 %** |
+| Episode 5 000 | **2 471** | **188 / 244** | **77.0 %** | — | **100 %** |
 
 > **Success** is defined as scoring ≥ 1 200 points in a single episode (≈ 120 dots eaten).  
-> **Steps to milestone** measures how quickly the agent reaches that score — fewer steps = faster solve.
+> From episode 2 000 onward the agent hits that milestone in **100 %** of games.  
+> The agent eats ~78 % of all maze dots consistently by ep 1 000+; full level clears require continued training beyond 5 000 episodes.
 
 #### Score progression
 

@@ -84,9 +84,15 @@ def _bar_ax(ax, labels, means, stds, color, ylabel, title):
     ax.set_ylim(0, max(means) * 1.25 + 1)
 
 
+def _palette(n, cmap="Blues"):
+    cm = plt.get_cmap(cmap)
+    return [cm(0.3 + 0.65 * i / max(n - 1, 1)) for i in range(n)]
+
+
 def plot_score_progress(stage_labels, data_by_stage, out_path):
-    fig, ax = plt.subplots(figsize=(9, 5))
-    colors = ["#90CAF9", "#42A5F5", "#1565C0"]
+    n = len(stage_labels)
+    fig, ax = plt.subplots(figsize=(max(9, n * 1.4), 5))
+    colors = _palette(n, "Blues")
     for i, (label, d) in enumerate(zip(stage_labels, data_by_stage)):
         scores = d["scores"]
         x = np.full(len(scores), i) + np.random.uniform(-0.18, 0.18, len(scores))
@@ -97,7 +103,7 @@ def plot_score_progress(stage_labels, data_by_stage, out_path):
                     capsize=6, color="black", linewidth=1.5, zorder=4)
 
     ax.set_xticks(range(len(stage_labels)))
-    ax.set_xticklabels(stage_labels, fontsize=12)
+    ax.set_xticklabels(stage_labels, fontsize=max(7, 12 - len(stage_labels)))
     ax.set_xlabel("Training stage (checkpoint)", fontsize=12)
     ax.set_ylabel("Score per episode", fontsize=12)
     ax.set_title("Score Progression Across Training Stages",
@@ -111,8 +117,9 @@ def plot_score_progress(stage_labels, data_by_stage, out_path):
 
 
 def plot_dots_eaten(stage_labels, data_by_stage, out_path):
-    fig, ax = plt.subplots(figsize=(9, 5))
-    colors = ["#A5D6A7", "#4CAF50", "#1B5E20"]
+    n = len(stage_labels)
+    fig, ax = plt.subplots(figsize=(max(9, n * 1.4), 5))
+    colors = _palette(n, "Greens")
     for i, (label, d) in enumerate(zip(stage_labels, data_by_stage)):
         de = d["dots_eaten"]
         pct = de / TOTAL_DOTS * 100
@@ -146,8 +153,9 @@ def plot_solve_time(stage_labels, data_by_stage, out_path):
     Episodes that never hit the milestone are excluded from the mean
     and their count is shown separately.
     """
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-    colors = ["#FFCC80", "#FFA726", "#E65100"]
+    n = len(stage_labels)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(max(12, n * 1.8), 5))
+    colors = _palette(n, "Oranges")
 
     means, stds, hit_rates = [], [], []
     for label, d in zip(stage_labels, data_by_stage):
@@ -199,8 +207,9 @@ def plot_success_fail(stage_labels, data_by_stage, out_path):
     Stacked bar: success (score ≥ threshold) vs fail per training stage.
     Line overlay: mean score trend.
     """
-    fig, ax1 = plt.subplots(figsize=(9, 5))
-    x       = np.arange(len(stage_labels))
+    n = len(stage_labels)
+    fig, ax1 = plt.subplots(figsize=(max(9, n * 1.4), 5))
+    x       = np.arange(n)
     width   = 0.5
 
     n_suc, n_fail, mean_scores = [], [], []
@@ -258,11 +267,19 @@ def plot_success_fail(stage_labels, data_by_stage, out_path):
 # ── main ────────────────────────────────────────────────────────────────────
 
 def main():
-    checkpoints = [
-        ("Episode 100", os.path.join(CKPT_DIR, "dqn_ep100.pt")),
-        ("Episode 200", os.path.join(CKPT_DIR, "dqn_ep200.pt")),
-        ("Episode 300", os.path.join(CKPT_DIR, "dqn_ep300.pt")),
+    # All candidate checkpoints in chronological order.
+    # Only those that exist on disk are evaluated.
+    candidates = [
+        ("ep 100",  os.path.join(CKPT_DIR, "dqn_ep100.pt")),
+        ("ep 200",  os.path.join(CKPT_DIR, "dqn_ep200.pt")),
+        ("ep 300",  os.path.join(CKPT_DIR, "dqn_ep300.pt")),
+        ("ep 1000", os.path.join(CKPT_DIR, "dqn_ep1000.pt")),
+        ("ep 2000", os.path.join(CKPT_DIR, "dqn_ep2000.pt")),
+        ("ep 3000", os.path.join(CKPT_DIR, "dqn_ep3000.pt")),
+        ("ep 4000", os.path.join(CKPT_DIR, "dqn_ep4000.pt")),
+        ("ep 5000", os.path.join(CKPT_DIR, "dqn_ep5000.pt")),
     ]
+    checkpoints = [(l, p) for l, p in candidates if os.path.exists(p)]
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
     stage_labels = []
