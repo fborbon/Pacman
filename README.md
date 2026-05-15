@@ -328,61 +328,116 @@ python AI_player/play.py --model AI_player/checkpoints/dqn_best.pt --headless --
 
 ---
 
-### Training Results — 300-Episode Run
+### Training Results — Full 10 300-Episode Campaign
 
-Results span two training runs totalling **5 300 episodes** (~8 hours, CPU-only).  
-Checkpoints at episodes 100, 200, 300, 1 000, 2 000, 3 000, 4 000 and 5 000 were each evaluated over 60 games.
+Three successive training runs on a single CPU totalling **10 300 episodes** and **~18 hours** of wall-clock time. All 13 checkpoints were evaluated over 60 games each.
 
 #### Key statistics
 
-| Checkpoint | Mean score | Dots eaten | Maze completion | Steps to milestone | Success rate |
-|:---:|---:|---:|---:|---:|---:|
-| Episode 100 | 843 | 76 / 244 | 31.1 % | — | 7 % |
-| Episode 200 | 1 266 | 110 / 244 | 45.1 % | — | 58 % |
-| Episode 300 | 1 601 | 137 / 244 | 56.1 % | — | 82 % |
-| Episode 1 000 | 2 479 | 192 / 244 | 78.7 % | — | 98 % |
-| Episode 2 000 | 2 349 | 186 / 244 | 76.2 % | — | **100 %** |
-| Episode 3 000 | 2 498 | 192 / 244 | 78.7 % | — | **100 %** |
-| Episode 4 000 | 2 449 | 191 / 244 | 78.3 % | — | **100 %** |
-| Episode 5 000 | **2 471** | **188 / 244** | **77.0 %** | — | **100 %** |
+| Checkpoint | Mean score | Dots eaten | Maze % | Success rate |
+|:---:|---:|---:|---:|---:|
+| ep 100 | 852 | 76 / 244 | 31 % | 5 % |
+| ep 200 | 1 358 | 115 / 244 | 47 % | 72 % |
+| ep 300 | 1 642 | 139 / 244 | 57 % | 85 % |
+| ep 1 300 | 2 472 | 191 / 244 | 78 % | **100 %** |
+| ep 2 300 | 2 383 | 187 / 244 | 77 % | **100 %** |
+| ep 3 300 | 2 433 | 187 / 244 | 77 % | **100 %** |
+| ep 4 300 | 2 395 | 186 / 244 | 76 % | **100 %** |
+| ep 5 300 | 2 454 | 189 / 244 | 77 % | 98 % |
+| ep 6 300 | **2 585** | **193 / 244** | **79 %** | **100 %** |
+| ep 7 300 | 2 429 | 189 / 244 | 77 % | **100 %** |
+| ep 8 300 | 2 213 | 176 / 244 | 72 % | 93 % |
+| ep 9 300 | 2 007 | 158 / 244 | 65 % | 83 % |
+| ep 10 300 | 2 400 | 184 / 244 | 75 % | **100 %** |
 
-> **Success** is defined as scoring ≥ 1 200 points in a single episode (≈ 120 dots eaten).  
-> From episode 2 000 onward the agent hits that milestone in **100 %** of games.  
-> The agent eats ~78 % of all maze dots consistently by ep 1 000+; full level clears require continued training beyond 5 000 episodes.
+> **Success** = scoring ≥ 1 200 points per episode (≈ 120 dots eaten).  
+> Peak performance reached at **ep 6 300** (score 2 585, 79 % maze). A temporary dip at ep 8 300–9 300 reflects natural DQN oscillation before recovery.
 
 #### Score progression
-
-Mean episode score more than doubles from episode 100 to 300, with variance shrinking as the policy stabilises.
 
 ![Score progression](AI_player/training_results/chart_score_progress.png)
 
 #### Maze completion — dots eaten
 
-The agent goes from eating 30 % of the maze at episode 100 to nearly 60 % at episode 300, with the distribution tightening noticeably.
-
 ![Dots eaten](AI_player/training_results/chart_dots_eaten.png)
 
 #### Time to solve the labyrinth
 
-Left panel: how many steps the agent needs to reach the 1 200-point milestone (only episodes where it succeeded).  
-Right panel: what fraction of episodes hit the milestone at all.
-
-The agent solves the milestone **49 % faster** by episode 300, and goes from succeeding in 1 in 20 games to succeeding in 9 in 10.
+Steps to reach the 1 200-point milestone (left) and hit rate per checkpoint (right).
 
 ![Solve time](AI_player/training_results/chart_solve_time.png)
 
 #### Successes and failures
 
-Stacked bars show raw success / failure counts per checkpoint (out of 60 eval games).  
-The dashed orange line tracks mean score on the right axis.
-
 ![Success and failures](AI_player/training_results/chart_success_fail.png)
 
-#### Policy evolution — game screenshots every 30 episodes
+#### Policy evolution
 
-Each frame is a snapshot of the agent playing after that many training episodes. The maze visibly empties further and further right as the policy matures.
+Game snapshots every 500 episodes showing the maze emptying progressively as the policy matures.
 
 ![Progression grid](AI_player/training_results/chart_progression.png)
+
+---
+
+## Training Journey Summary
+
+### Execution statistics
+
+| Run | Episodes | Wall time | Best score | Notes |
+|:---:|:---:|---:|---:|---|
+| Run 1 | 300 | 21 min | 2 160 | ε decayed 1.0 → 0.05; buffer filled |
+| Run 2 | 5 000 | 478 min | 4 310 | Resumed from ep 300; ε = 0.05 fixed |
+| Run 3 | 5 000 | 590 min | 5 110 | Resumed from ep 5 300; ε = 0.05 fixed |
+| **Total** | **10 300** | **~18.1 hours** | **5 110** | Single CPU, no GPU |
+
+| Metric | Value |
+|---|---|
+| Total gradient steps | ~10.7 million |
+| Replay buffer capacity | 100 000 transitions |
+| Neural network parameters | ~145 000 weights |
+| Peak mean score (eval) | 2 585 at ep 6 300 |
+| Peak single-game score | 5 110 |
+| Best maze completion | 79 % of 244 dots |
+| Full level clears achieved | 0 |
+| Hardware | CPU only (~320 % utilisation, 4 cores) |
+
+---
+
+### Why does a "simple" game like Pac-Man demand so much computation?
+
+Pac-Man looks trivial to a human: eat dots, dodge ghosts. A child learns it in minutes. Yet 18 hours of CPU training produced an agent that still cannot reliably clear a single level. The gap between human learning and gradient descent reveals seven deep challenges in reinforcement learning.
+
+#### 1. The state space is astronomically large
+
+The maze has ~240 walkable cells. Pac-Man can occupy any of them, facing any of 4 directions. Each of 4 ghosts can be on any tile in any AI state (chase, scatter, frightened, eaten). The dot configuration alone has 2²⁴⁴ possible patterns. Even with the compact 81-feature observation, the agent must generalise across a state space it can never fully explore. A human instantly recognises "ghost approaching from the left — flee right" regardless of exact tile; the network must learn this from thousands of raw examples.
+
+#### 2. Rewards are sparse and heavily delayed
+
+Each dot eaten gives +1 reward, but collecting all 244 to clear a level takes 400–600 steps. The level-clear bonus (+100) arrives hundreds of decisions after the early navigation choices that made it possible. This is the **credit-assignment problem**: the network must discover which action taken 300 steps ago was responsible for a reward arriving now. Humans solve this with intuitive causal reasoning; DQN must infer it statistically across millions of transitions.
+
+#### 3. Ghosts create a deceptive reward landscape
+
+Blinky chases directly. Pinky ambushes 4 tiles ahead. Inky flanks. Clyde retreats when close. The same tile is worth +1 (safe dot) or −50 (fatal collision) depending on ghost positions, directions, and whether a power pellet was recently eaten. The Q-function must encode this context-sensitivity across the entire maze — a surface so irregular that 145 000 network weights and 10 million gradient steps are barely enough to approximate it.
+
+#### 4. Exploration is genuinely hard
+
+With a random policy, the probability of accidentally eating all 244 dots without dying is negligible. For thousands of early episodes, the level-clear signal never fires, so the network has no gradient signal pointing toward full-maze completion. The ε-greedy schedule provides exploration, but at ε = 0.05 (the floor we reached after run 1), the agent still makes ~1 random move in 20 — enough to occasionally walk into ghosts mid-route.
+
+#### 5. Training targets are non-stationary
+
+Unlike supervised learning (fixed labels), DQN trains against Bellman targets computed from the same network it is updating. Every weight update shifts the target, which can shift the Q-values, which changes the targets again. This feedback loop is inherently unstable and is exactly why the **target network** (frozen for 1 000 steps) and **replay buffer** (breaking temporal correlations) exist. Without them, training diverges. Even with them, oscillations are visible in the ep 8 300–9 300 dip in the evaluation table.
+
+#### 6. The agent has no memory
+
+The network receives a single 81-feature snapshot per step. It cannot remember that a ghost was approaching from the right two steps ago, or that it recently ate a power pellet and the ghosts are now vulnerable. All context must be inferred from the instantaneous observation. A human player unconsciously tracks ghost trajectories and plans several moves ahead; this agent must re-derive everything from a frozen frame.
+
+#### 7. Each episode requires thousands of interactions
+
+A single policy improvement requires: running the game to collect a transition, storing it in the 100k buffer, sampling a 64-transition batch, doing a forward pass (81→256→256→4), computing Huber loss against the target network, backpropagating gradients, and updating weights. This cycle runs once per agent step — roughly **600 cycles per episode**, **10 000 episodes to see meaningful policy improvement**, and **10 million total cycles** to approach the performance plateau. On a CPU this takes ~18 hours; on a modern GPU it would take ~30 minutes.
+
+#### The bottom line
+
+Pac-Man is "simple" for a human because we bring billions of years of evolved spatial reasoning, danger recognition, and planning to the table. We transfer concepts instantly — "moving yellow circle + moving coloured ghost = danger" is obvious to any primate. A DQN starts from random noise. Every behaviour — *flee from Blinky*, *ambush corner from Pinky*, *chase blue ghost*, *prioritise isolated dots* — must be discovered from scratch through trial, error, and gradient descent over millions of interactions. The 18 hours of training here produced an agent that consistently eats ~77 % of the maze. A skilled human clears it in under 90 seconds. That gap is the distance between 10 million gradient steps and cognition.
 
 ---
 

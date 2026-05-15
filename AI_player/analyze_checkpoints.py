@@ -270,14 +270,19 @@ def main():
     # All candidate checkpoints in chronological order.
     # Only those that exist on disk are evaluated.
     candidates = [
-        ("ep 100",  os.path.join(CKPT_DIR, "dqn_ep100.pt")),
-        ("ep 200",  os.path.join(CKPT_DIR, "dqn_ep200.pt")),
-        ("ep 300",  os.path.join(CKPT_DIR, "dqn_ep300.pt")),
-        ("ep 1000", os.path.join(CKPT_DIR, "dqn_ep1000.pt")),
-        ("ep 2000", os.path.join(CKPT_DIR, "dqn_ep2000.pt")),
-        ("ep 3000", os.path.join(CKPT_DIR, "dqn_ep3000.pt")),
-        ("ep 4000", os.path.join(CKPT_DIR, "dqn_ep4000.pt")),
-        ("ep 5000", os.path.join(CKPT_DIR, "dqn_ep5000.pt")),
+        ("ep 100",   os.path.join(CKPT_DIR, "dqn_ep100.pt")),
+        ("ep 200",   os.path.join(CKPT_DIR, "dqn_ep200.pt")),
+        ("ep 300",   os.path.join(CKPT_DIR, "dqn_ep300.pt")),
+        ("ep 1300",  os.path.join(CKPT_DIR, "dqn_ep1300.pt")),
+        ("ep 2300",  os.path.join(CKPT_DIR, "dqn_ep2300.pt")),
+        ("ep 3300",  os.path.join(CKPT_DIR, "dqn_ep3300.pt")),
+        ("ep 4300",  os.path.join(CKPT_DIR, "dqn_ep4300.pt")),
+        ("ep 5300",  os.path.join(CKPT_DIR, "dqn_ep5300.pt")),
+        ("ep 6300",  os.path.join(CKPT_DIR, "dqn_ep1000.pt")),
+        ("ep 7300",  os.path.join(CKPT_DIR, "dqn_ep2000.pt")),
+        ("ep 8300",  os.path.join(CKPT_DIR, "dqn_ep3000.pt")),
+        ("ep 9300",  os.path.join(CKPT_DIR, "dqn_ep4000.pt")),
+        ("ep 10300", os.path.join(CKPT_DIR, "dqn_ep5000.pt")),
     ]
     checkpoints = [(l, p) for l, p in candidates if os.path.exists(p)]
 
