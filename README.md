@@ -12,21 +12,13 @@ This repository preserves the original **Atari Pac-Man** 6502 assembly source co
 
 1. [The Story of Pac-Man](#the-story-of-pac-man)
 2. [Repository Contents](#repository-contents)
-   - [Atari Version — Roklan Corp](#atari-version--roklan-corp-revision-30)
-   - [Python Version](#python-version)
 3. [Screenshots](#screenshots)
 4. [Running the Python Version](#running-the-python-version)
 5. [AI Player — Deep Q-Network (DQN)](#ai-player--deep-q-network-dqn)
-   - [Libraries Used](#libraries-used)
-   - [Data Processing Pipeline](#data-processing-pipeline)
-   - [Data Flow Diagram](#data-flow-diagram)
-   - [The DQN Model — Design Rationale](#the-dqn-model--design-rationale)
-   - [Training the Agent](#training-the-agent)
-   - [Watching the Agent Play](#watching-the-agent-play)
-   - [Training Results](#training-results--full-10-300-episode-campaign)
 6. [Training Journey Summary](#training-journey-summary)
 7. [Upstream Repository](#upstream-repository)
 8. [License](#license)
+9. [Auditing](#auditing)
 
 ---
 
