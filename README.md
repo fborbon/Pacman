@@ -1,4 +1,4 @@
-# PAC-MAN — Atari/Roklan 1982 · Source Code & Python Port
+# PAC-MAN DQN Player
 
 This repository preserves the original **Atari Pac-Man** 6502 assembly source code developed by **Roklan Corp** for Atari Inc. (Revision 3.0, 10/03/82), together with a faithful **Python translation** into a playable modern game and a **Deep Q-Network (DQN) reinforcement-learning agent** that learns to play from scratch — no hard-coded rules, only the raw game signal. The project combines historical software preservation, a hands-on study of classic ghost-personality AI, and a practical demonstration of why a seemingly simple arcade game is a surprisingly hard reinforcement-learning problem (10 million gradient steps and 18 hours of CPU training to reach 77 % maze completion).
 
