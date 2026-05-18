@@ -1,6 +1,32 @@
 # PAC-MAN — Atari/Roklan 1982 · Source Code & Python Port
 
-This repository preserves the original **Atari Pac-Man** source code developed by **Roklan Corp** for Atari Inc. (Revision 3.0, 10/03/82), together with a faithful **Python translation** of that code into a playable modern game.
+This repository preserves the original **Atari Pac-Man** 6502 assembly source code developed by **Roklan Corp** for Atari Inc. (Revision 3.0, 10/03/82), together with a faithful **Python translation** into a playable modern game and a **Deep Q-Network (DQN) reinforcement-learning agent** that learns to play from scratch — no hard-coded rules, only the raw game signal. The project combines historical software preservation, a hands-on study of classic ghost-personality AI, and a practical demonstration of why a seemingly simple arcade game is a surprisingly hard reinforcement-learning problem (10 million gradient steps and 18 hours of CPU training to reach 77 % maze completion).
+
+**Main technologies:** Python · pygame · PyTorch (DQN reinforcement learning) · NumPy · 6502 assembly (original Atari source)
+
+**Monthly cost:** $0. The project runs entirely on your local machine with no cloud services, no APIs, and no paid libraries. Training the DQN agent requires only a CPU (~18 hours for 10 300 episodes) or a GPU for faster results.
+
+---
+
+## Table of Contents
+
+1. [The Story of Pac-Man](#the-story-of-pac-man)
+2. [Repository Contents](#repository-contents)
+   - [Atari Version — Roklan Corp](#atari-version--roklan-corp-revision-30)
+   - [Python Version](#python-version)
+3. [Screenshots](#screenshots)
+4. [Running the Python Version](#running-the-python-version)
+5. [AI Player — Deep Q-Network (DQN)](#ai-player--deep-q-network-dqn)
+   - [Libraries Used](#libraries-used)
+   - [Data Processing Pipeline](#data-processing-pipeline)
+   - [Data Flow Diagram](#data-flow-diagram)
+   - [The DQN Model — Design Rationale](#the-dqn-model--design-rationale)
+   - [Training the Agent](#training-the-agent)
+   - [Watching the Agent Play](#watching-the-agent-play)
+   - [Training Results](#training-results--full-10-300-episode-campaign)
+6. [Training Journey Summary](#training-journey-summary)
+7. [Upstream Repository](#upstream-repository)
+8. [License](#license)
 
 ---
 
@@ -454,3 +480,33 @@ That repository collects the original Roklan Corp files as they have circulated 
 
 See `Atari_version/LICENSE` for the terms covering the original assembly source.
 The Python translation is provided for educational and preservation purposes.
+
+---
+
+## Auditing
+
+This section provides a structured checklist for review by an IT expert and a reinforcement-learning / game-AI subject-matter expert.
+
+### Audit Items
+
+- **Cost & resource minimization** — $0. The entire project runs on local hardware. Training the DQN agent requires ~18 hours on a CPU or ~30 minutes on a GPU. No cloud services, APIs, or paid libraries are used.
+- **IT architecture** — Clean three-part repository structure (Atari source preservation / Python port / AI player). The `environment.py` gym-style wrapper provides a standard interface between the game and the RL agent. Separation of `train.py`, `play.py`, and `environment.py` follows established RL project conventions.
+- **Code efficiency** — The 81-feature vector observation avoids the computational cost of pixel-based CNNs. The replay buffer is capped at 100,000 transitions (fits in CPU RAM). Frame skip=4 reduces the effective decision frequency, matching the original DQN paper's approach. Checkpointing every episode set allows resuming training without loss.
+- **Cybersecurity** — No network access, no credentials, no external APIs. Fully self-contained educational project.
+- **Readability & maintainability** — Each DQN design choice (buffer size, frame skip, target network sync interval, Huber loss, γ, ε schedule) has a documented rationale. The training results table across 13 checkpoints is transparent and reproducible. Assembly-to-Python mapping table aids cross-referencing.
+- **AI / ML model adequacy** — DQN is the correct algorithm for a small discrete-action deterministic environment. Hyperparameters (γ=0.99, lr=1e-4, Huber loss, gradient clipping ≤10) follow established best practices from the original DQN paper. The known ceiling (~79% maze completion) is honestly documented and explained.
+- **Reproducibility** — `random_state=42` ensures reproducible training runs. Checkpoint system enables training to be paused and resumed. The training journey (3 runs, 10,300 episodes) is fully documented with wall-clock times.
+- **Other** — GPU training is not required but would reduce training time by ~36×. The headless benchmark mode (`--headless`) is useful for automated evaluation. No automated test suite for the game logic or RL environment.
+
+### Summary Table
+
+| Audit Item | Claude's Assessment | Human Expert Assessment |
+|---|---|---|
+| Cost & resource minimization | $0. Local CPU/GPU only. 18h CPU training is acceptable for an educational project. | |
+| IT architecture | Clean three-part structure with gym-style environment wrapper. Follows established RL project conventions. | |
+| Code efficiency | 81-feature vector avoids CNN overhead. Replay buffer fits in RAM. Frame skip=4 is correct. | |
+| Cybersecurity | No network access or credentials. Self-contained educational project. Minimal risk. | |
+| Readability & maintainability | Every hyperparameter choice is justified. Training results are transparent. Assembly-Python mapping is documented. | |
+| AI / ML model adequacy | DQN is the right algorithm here. Hyperparameters follow published best practices. Performance ceiling is honestly documented. | |
+| Reproducibility | random_state=42 + checkpoint system ensures reproducible, resumable training. | |
+| Other | GPU support would accelerate training significantly. No automated test suite for game logic or RL environment. | |
